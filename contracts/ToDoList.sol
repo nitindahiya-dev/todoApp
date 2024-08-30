@@ -1,59 +1,67 @@
-// SPDX-License-Identifier: SEE LICENSE IN LICENSE
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-
-contract TodoList {
+contract ToDoList {
     uint256 public _idUser;
-    address public ownerOfContact;
+    address public ownerOfContract;
 
     address[] public creators;
-    string[] public message;
+    string[] public messaage;
     uint256[] public messageId;
 
-    struct TodoListApp {
+    struct ToDoListApp {
         address account;
         uint256 userId;
         string message;
         bool completed;
     }
 
-    event TodoEvent(
+    event ToDoEvent(
         address indexed account,
         uint256 indexed userId,
         string message,
         bool completed
     );
 
-    mapping (address => TodoListApp) public todoListApps;
+    mapping(address => ToDoListApp) public toDoListApps;
 
-    constructor(){
-        ownerOfContact = msg.sender;
+    constructor() {
+        ownerOfContract = msg.sender;
     }
 
-    function inc() internal{
+    function inc() internal {
         _idUser++;
     }
 
-    function createList(string calldata _message) external{
+    function createList(string calldata _message) external {
         inc();
 
         uint256 idNumber = _idUser;
-        TodoListApp storage todo = todoListApps[msg.sender];
+        ToDoListApp storage toDo = toDoListApps[msg.sender];
 
-        todo.account = msg.sender;
-        todo.message = _message;
-        todo.completed = false;
-        todo.userId = idNumber;
+        toDo.account = msg.sender;
+        toDo.message = _message;
+        toDo.completed = false;
+        toDo.userId = idNumber;
 
         creators.push(msg.sender);
-        message.push(_message);
+        messaage.push(_message);
         messageId.push(idNumber);
 
-        emit TodoEvent(msg.sender, todo.userId, _message, todo.completed);
+        emit ToDoEvent(msg.sender, toDo.userId, _message, toDo.completed);
     }
 
-    function getCreatorData(address _address) public view returns(address, uint256, string memory, bool){
-        TodoListApp memory singleUserData = todoListApps[_address];
+    function getCreatorData(address _address)
+        public
+        view
+        returns (
+            address,
+            uint256,
+            string memory,
+            bool
+        )
+    {
+        ToDoListApp memory singleUserData = toDoListApps[_address];
         return (
             singleUserData.account,
             singleUserData.userId,
@@ -67,12 +75,11 @@ contract TodoList {
     }
 
     function getMessage() external view returns (string[] memory) {
-        return message;
+        return messaage;
     }
 
     function toggle(address _creator) public {
-        TodoListApp storage singleUserData = todoListApps[_creator];
+        ToDoListApp storage singleUserData = toDoListApps[_creator];
         singleUserData.completed = !singleUserData.completed;
     }
-
 }
